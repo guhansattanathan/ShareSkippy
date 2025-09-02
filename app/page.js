@@ -20,7 +20,7 @@ const carouselMessages = [
 // Community stories
 const communityStories = [
   {
-    quote: "I can&apos;t have a dog in my apartment, but now I hike with Max every week.",
+    quote: "I cant have a dog in my apartment, but now I hike with Max every week.",
     author: "Sarah, Dog Lover"
   },
   {

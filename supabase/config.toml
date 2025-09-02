@@ -119,7 +119,7 @@ enabled = true
 # in emails.
 site_url = "https://shareskippy.com"
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
-additional_redirect_urls = ["https://shareskippy.com", "http://localhost:3000", "http://127.0.0.1:3000"]
+additional_redirect_urls = ["https://shareskippy.com", "https://shareskippy.com/tos", "https://shareskippy.com/profile", "https://shareskippy.com/community", "https://shareskippy.com/privacy-policy"]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
 # Path to JWT signing key. DO NOT commit your signing keys file to git.
@@ -187,7 +187,7 @@ otp_expiry = 3600
 # port = 587
 # user = "resend"
 # pass = "env(RESEND_API_KEY)"
-# admin_email = "admin@kaia.dev"
+admin_email = "kcolban@gmail.com"
 # sender_name = "ShareSkippy"
 
 # Uncomment to customize email template
