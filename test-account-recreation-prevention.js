@@ -136,3 +136,4 @@ async function testAccountRecreationPrevention() {
 
 // Run the test
 testAccountRecreationPrevention();
+

@@ -91,3 +91,4 @@ CREATE OR REPLACE TRIGGER on_deletion_completed_record_email
 COMMENT ON TABLE deleted_emails IS 'Tracks email addresses of deleted accounts to prevent recreation';
 COMMENT ON FUNCTION is_email_deleted(TEXT) IS 'Checks if an email address was previously deleted and cannot be reused';
 COMMENT ON FUNCTION record_deleted_email() IS 'Records email addresses when accounts are deleted to prevent recreation';
+
