@@ -70,3 +70,4 @@ echo "1. Set CRON_SECRET_TOKEN in your environment"
 echo "2. Configure the cron job using one of the methods above"
 echo "3. Test the endpoint manually first"
 echo "4. Monitor the logs for any issues"
+

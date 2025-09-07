@@ -23,7 +23,7 @@ const Header = () => {
   return (
     <header className="bg-indigo-600 text-white">
       <nav
-        className="container flex items-center justify-between px-8 py-4 mx-auto"
+        className="container flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4 mx-auto"
         aria-label="Global"
       >
         {/* Logo */}
@@ -36,12 +36,12 @@ const Header = () => {
             <OptimizedImage
               src={logo}
               alt={`${config.appName} logo`}
-              className="w-8"
+              className="w-6 sm:w-8"
               priority={true}
               width={32}
               height={32}
             />
-            <span className="font-extrabold text-lg text-white">
+            <span className="font-extrabold text-base sm:text-lg text-white">
               {config.appName}
             </span>
           </Link>
@@ -93,7 +93,7 @@ const Header = () => {
       {/* Mobile menu */}
       <div className={`relative z-50 ${isOpen ? "" : "hidden"}`}>
         <div
-          className={`fixed inset-y-0 right-0 z-10 w-full px-8 py-4 overflow-y-auto 
+          className={`fixed inset-y-0 right-0 z-10 w-full px-4 sm:px-6 lg:px-8 py-4 overflow-y-auto 
           bg-indigo-600 sm:max-w-sm sm:ring-1 sm:ring-white/10 
           transform origin-right transition ease-in-out duration-300`}
         >
@@ -107,12 +107,12 @@ const Header = () => {
               <OptimizedImage
                 src={logo}
                 alt={`${config.appName} logo`}
-                className="w-8"
+                className="w-6 sm:w-8"
                 priority={true}
                 width={32}
                 height={32}
               />
-              <span className="font-extrabold text-lg text-white">
+              <span className="font-extrabold text-base sm:text-lg text-white">
                 {config.appName}
               </span>
             </Link>

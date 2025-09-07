@@ -2,7 +2,7 @@
 
 ## Issue: "Failed to save profile"
 
-This guide helps you debug and fix profile save issues in the WalkSkippy application.
+This guide helps you debug and fix profile save issues in the ShareSkippy application.
 
 ## Quick Fixes to Try First
 

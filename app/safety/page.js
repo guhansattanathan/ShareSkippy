@@ -112,7 +112,7 @@ export default function SafetyGuidelines() {
                 <li><strong>Contact local animal control</strong> if a dog is aggressive or out of control</li>
                 <li><strong>Seek medical attention</strong> for any injuries to people or animals</li>
                 <li><strong>Document everything</strong> - take photos, save messages, note details</li>
-                <li><strong>Report the incident</strong> to WalkSkippy support</li>
+                <li><strong>Report the incident</strong> to ShareSkippy support</li>
                 <li><strong>Contact your veterinarian</strong> if your dog is injured</li>
               </ul>
             </section>
@@ -148,7 +148,7 @@ export default function SafetyGuidelines() {
                   <p className="text-sm text-gray-700">Animal Control</p>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="font-semibold text-gray-900 mb-2">WalkSkippy Support</h3>
+                  <h3 className="font-semibold text-gray-900 mb-2">ShareSkippy Support</h3>
                   <p className="text-sm text-gray-700">Report Safety Issues</p>
                   <p className="text-sm text-gray-700">Block Users</p>
                   <p className="text-sm text-gray-700">General Support</p>
@@ -161,7 +161,7 @@ export default function SafetyGuidelines() {
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                 <h3 className="text-lg font-semibold text-yellow-800 mb-2">Important Disclaimer</h3>
                 <p className="text-yellow-700 text-sm">
-                  WalkSkippy is a free marketplace platform that connects users. We do not verify the identity, 
+                  ShareSkippy is a free marketplace platform that connects users. We do not verify the identity, 
                   background, or trustworthiness of users. We do not screen or evaluate dogs for behavior or 
                   health issues. Users are responsible for their own safety and the safety of their dogs. 
                   Always use caution and follow these safety guidelines.

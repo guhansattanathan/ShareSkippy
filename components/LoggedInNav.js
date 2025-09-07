@@ -57,11 +57,11 @@ const LoggedInNav = () => {
   return (
     <header className="bg-indigo-600 text-white">
       <nav
-        className="container flex items-center justify-between px-8 py-4 mx-auto"
+        className="container flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4 mx-auto"
         aria-label="Global"
       >
-        {/* Logo on large screens */}
-        <div className="flex lg:flex-1">
+        {/* Logo - responsive sizing */}
+        <div className="flex xl:flex-1">
           <Link
             className="flex items-center gap-2 shrink-0"
             href="/"
@@ -70,18 +70,18 @@ const LoggedInNav = () => {
             <Image
               src={logo}
               alt={`${config.appName} logo`}
-              className="w-8"
+              className="w-6 sm:w-8"
               placeholder="blur"
               priority={true}
               width={32}
               height={32}
             />
-            <span className="font-extrabold text-lg text-white">{config.appName}</span>
+            <span className="font-extrabold text-base sm:text-lg text-white">{config.appName}</span>
           </Link>
         </div>
 
-        {/* Burger button to open menu on mobile */}
-        <div className="flex lg:hidden">
+        {/* Burger button to open menu on small and medium screens */}
+        <div className="flex xl:hidden">
           <button
             type="button"
             className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5"
@@ -94,7 +94,7 @@ const LoggedInNav = () => {
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="w-6 h-6 text-base-content"
+              className="w-6 h-6 text-white"
             >
               <path
                 strokeLinecap="round"
@@ -105,13 +105,13 @@ const LoggedInNav = () => {
           </button>
         </div>
 
-        {/* Navigation items on large screens */}
-        <div className="hidden lg:flex lg:justify-center lg:gap-8 lg:items-center">
+        {/* Navigation items on extra large screens */}
+        <div className="hidden xl:flex xl:justify-center xl:gap-6 xl:items-center flex-1">
           {navigationItems.map((item) => (
             <Link
               href={item.href}
               key={item.href}
-              className={`px-3 py-2 rounded-lg transition-colors text-white hover:text-indigo-100 ${
+              className={`px-2 py-2 rounded-lg transition-colors text-white hover:text-indigo-100 text-sm whitespace-nowrap ${
                 pathname === item.href ? "bg-white/20 text-white" : ""
               }`}
               title={item.label}
@@ -121,8 +121,8 @@ const LoggedInNav = () => {
           ))}
         </div>
 
-        {/* Sign out button on large screens */}
-        <div className="hidden lg:flex lg:justify-end lg:flex-1">
+        {/* Sign out button on extra large screens */}
+        <div className="hidden xl:flex xl:justify-end xl:flex-1">
           <button
             onClick={handleSignOut}
             className="btn btn-outline btn-sm text-white border-white hover:bg-white hover:text-indigo-600"
@@ -135,7 +135,7 @@ const LoggedInNav = () => {
       {/* Mobile menu */}
       <div className={`relative z-50 ${isOpen ? "" : "hidden"}`}>
         <div
-          className={`fixed inset-y-0 right-0 z-10 w-full px-8 py-4 overflow-y-auto bg-indigo-600 sm:max-w-sm sm:ring-1 sm:ring-neutral/10 transform origin-right transition ease-in-out duration-300`}
+          className={`fixed inset-y-0 right-0 z-10 w-full px-4 sm:px-6 lg:px-8 py-4 overflow-y-auto bg-indigo-600 sm:max-w-sm sm:ring-1 sm:ring-neutral/10 transform origin-right transition ease-in-out duration-300`}
         >
           {/* Logo on small screens */}
           <div className="flex items-center justify-between">
@@ -144,16 +144,16 @@ const LoggedInNav = () => {
               title={`${config.appName} home`}
               href="/"
             >
-              <Image
-                src={logo}
-                alt={`${config.appName} logo`}
-                className="w-8"
-                placeholder="blur"
-                priority={true}
-                width={32}
-                height={32}
-              />
-              <span className="font-extrabold text-lg text-white">{config.appName}</span>
+            <Image
+              src={logo}
+              alt={`${config.appName} logo`}
+              className="w-6 sm:w-8"
+              placeholder="blur"
+              priority={true}
+              width={32}
+              height={32}
+            />
+            <span className="font-extrabold text-base sm:text-lg text-white">{config.appName}</span>
             </Link>
             <button
               type="button"

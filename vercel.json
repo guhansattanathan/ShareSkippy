@@ -4,5 +4,13 @@
       "path": "/api/cron/process-deletions",
       "schedule": "0 2 * * *"
     }
-  ]
+  ],
+  "functions": {
+    "app/api/account/deletion-request/route.js": {
+      "maxDuration": 30
+    },
+    "app/api/cron/process-deletions/route.js": {
+      "maxDuration": 60
+    }
+  }
 }

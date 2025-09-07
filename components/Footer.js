@@ -3,7 +3,7 @@ import Image from "next/image";
 import config from "@/config";
 import logo from "@/app/icon.png";
 
-// Footer component matching the WalkSkippy design
+// Footer component matching the ShareSkippy design
 const Footer = () => {
   return (
     <footer className="bg-indigo-600 text-white">
@@ -12,12 +12,12 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* Left Column - Brand Information */}
           <div className="text-center md:text-left">
-            <h3 className="text-2xl font-bold mb-4 text-white">WalkSkippy</h3>
+            <h3 className="text-2xl font-bold mb-4 text-white">ShareSkippy</h3>
             <p className="text-sm mb-4 text-white">
               Connecting dog lovers with dog owners for free, community-based dog sharing experiences.
             </p>
             <p className="text-sm text-white">
-              © 2025 WalkSkippy. All rights reserved.
+              © 2025 ShareSkippy. All rights reserved.
             </p>
           </div>
 
@@ -64,7 +64,7 @@ const Footer = () => {
         <div className="border-t border-white/30 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
             <p className="text-white">
-              WalkSkippy is a free marketplace platform. Users are responsible for their own safety and interactions.
+              ShareSkippy is a free marketplace platform. Users are responsible for their own safety and interactions.
             </p>
             <p className="text-white">
               Made with ❤️ for dog lovers

@@ -126,55 +126,100 @@ export async function GET() {
 
 // DELETE /api/account/deletion-request - Cancel deletion request
 export async function DELETE() {
+  const startTime = Date.now();
+  
   try {
+    console.log('Starting deletion cancellation request...');
+    
     const supabase = createClient();
     
-    // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    // Check authentication with timeout
+    const authPromise = supabase.auth.getUser();
+    const authTimeout = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Authentication timeout')), 5000)
+    );
+    
+    const { data: { user }, error: authError } = await Promise.race([authPromise, authTimeout]);
+    
     if (authError || !user) {
+      console.log('Authentication failed:', authError);
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // First, check if there's a pending deletion request
-    const { data: existingRequest, error: checkError } = await supabase
-      .from('account_deletion_requests')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('status', 'pending')
-      .single();
+    console.log(`User authenticated: ${user.id}`);
 
-    if (checkError && checkError.code !== 'PGRST116') { // PGRST116 = no rows returned
-      throw checkError;
-    }
-
-    if (!existingRequest) {
-      return NextResponse.json({ 
-        error: 'No pending deletion request found to cancel' 
-      }, { status: 404 });
-    }
-
-    // Cancel the pending deletion request
-    const { error: updateError } = await supabase
+    // Use a more efficient approach - direct update with error handling
+    const { data: updatedRequest, error: updateError } = await supabase
       .from('account_deletion_requests')
       .update({ 
         status: 'cancelled',
         processed_at: new Date().toISOString()
       })
       .eq('user_id', user.id)
-      .eq('status', 'pending');
+      .eq('status', 'pending')
+      .select()
+      .single();
 
     if (updateError) {
-      console.error('Update error:', updateError);
+      console.error('Update error details:', {
+        code: updateError.code,
+        message: updateError.message,
+        details: updateError.details,
+        hint: updateError.hint
+      });
+      
+      // Handle specific error cases
+      if (updateError.code === 'PGRST116') {
+        return NextResponse.json({ 
+          error: 'No pending deletion request found to cancel' 
+        }, { status: 404 });
+      }
+      
+      if (updateError.code === '23505') { // Unique constraint violation
+        return NextResponse.json({ 
+          error: 'Database constraint error. Please contact support.' 
+        }, { status: 500 });
+      }
+      
       throw updateError;
     }
 
+    if (!updatedRequest) {
+      return NextResponse.json({ 
+        error: 'No pending deletion request found to cancel' 
+      }, { status: 404 });
+    }
+
+    const duration = Date.now() - startTime;
+    console.log(`Deletion cancellation completed in ${duration}ms`);
+
     return NextResponse.json({ 
       success: true,
-      message: 'Account deletion request cancelled successfully'
+      message: 'Account deletion request cancelled successfully',
+      duration: duration
     });
 
   } catch (error) {
-    console.error('Error cancelling deletion request:', error);
+    const duration = Date.now() - startTime;
+    console.error('Error cancelling deletion request:', {
+      error: error.message,
+      duration: duration,
+      stack: error.stack
+    });
+    
+    // Return more specific error messages
+    if (error.message.includes('timeout')) {
+      return NextResponse.json({ 
+        error: 'Request timed out. Please try again.' 
+      }, { status: 408 });
+    }
+    
+    if (error.message.includes('constraint')) {
+      return NextResponse.json({ 
+        error: 'Database constraint error. Please contact support.' 
+      }, { status: 500 });
+    }
+    
     return NextResponse.json({ 
       error: 'Failed to cancel deletion request. Please try again.' 
     }, { status: 500 });

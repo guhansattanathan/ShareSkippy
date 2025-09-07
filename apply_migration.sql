@@ -14,8 +14,7 @@ CREATE TABLE IF NOT EXISTS account_deletion_requests (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   
-  -- Ensure only one active deletion request per user
-  CONSTRAINT unique_active_deletion_request UNIQUE (user_id, status) DEFERRABLE INITIALLY DEFERRED
+  -- No constraint here - we'll use a partial unique index instead
 );
 
 -- Add index for efficient queries
@@ -23,6 +22,11 @@ CREATE INDEX IF NOT EXISTS idx_account_deletion_requests_user_id ON account_dele
 CREATE INDEX IF NOT EXISTS idx_account_deletion_requests_status ON account_deletion_requests(status);
 CREATE INDEX IF NOT EXISTS idx_account_deletion_requests_scheduled_date ON account_deletion_requests(scheduled_deletion_date);
 CREATE INDEX IF NOT EXISTS idx_account_deletion_requests_requested_at ON account_deletion_requests(requested_at);
+
+-- Ensure only one pending deletion request per user
+CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_pending_deletion_request 
+ON account_deletion_requests(user_id) 
+WHERE status = 'pending';
 
 -- Enable Row Level Security
 ALTER TABLE account_deletion_requests ENABLE ROW LEVEL SECURITY;
@@ -66,3 +70,4 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE TRIGGER on_deletion_request_update
   BEFORE UPDATE ON account_deletion_requests
   FOR EACH ROW EXECUTE FUNCTION update_deletion_request_updated_at();
+

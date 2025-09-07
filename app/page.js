@@ -5,15 +5,15 @@ import { useState, useEffect } from 'react';
 
 // Carousel messages for the hero section
 const carouselMessages = [
-  "Going on a date? Grab a pup first — it&apos;s the perfect wingman. If it flops, at least someone&apos;s happy to see you. 🐾",
+  "Going on a date? Grab a pup first — it's the perfect wingman. If it flops, at least someone&apos;s happy to see you. 🐾",
   "Need an instant mood booster? A wagging tail beats meditation apps, trust us. 🐶",
   "Owners get reliable walkers. Dog-lovers get their canine fix. Everyone swipes right on more belly rubs.",
-  "Love dogs but don&apos;t love vet bills, pet insurance, and 5AM potty breaks? Borrow one instead. 100% joy, 0% pee stains.",
+  "Love dogs but don't love vet bills, pet insurance, and 5AM potty breaks? Borrow one instead. 100% joy, 0% pee stains.",
   "Think of us as Tinder for dogs… but without the awkward small talk.",
   "Have a dog desperate for a friend? Set up a puppy playdate. Warning: your dog might end up with a better social life than you.",
-  "Some owners can&apos;t give their dogs enough walks — maybe they&apos;re elderly, disabled, or working 80-hour tech weeks. Meanwhile, plenty of dog lovers are dying to hike, run, or cuddle. We make the match.",
+  "Some owners can't give their dogs enough walks — maybe they&apos;re elderly, disabled, or working 80-hour tech weeks. Meanwhile, plenty of dog lovers are dying to hike, run, or cuddle. We make the match.",
   "Some pups need more play, some humans need more pup. Put them together and boom — happy dogs, happy people, fewer chewed remotes.",
-  "Your dog wants a marathon. You want a burrito. No shame — this is where WalkSkippy saves the day.",
+  "Your dog wants a marathon. You want a burrito. No shame — this is where ShareSkippy saves the day.",
   "When dogs get more love, humans get more joy. It&apos;s science. (Okay, maybe not peer-reviewed, but just look at their faces.)"
 ];
 
@@ -116,7 +116,7 @@ export default function Home() {
             </h1>
             
             <p className="text-xl md:text-2xl text-gray-700 mb-8 max-w-4xl mx-auto leading-relaxed">
-              WalkSkippy connects dog owners with dog lovers for free walks, hikes, cuddles, and adventures — all without the cost or full-time responsibility of ownership. Dogs get exercise and love, humans get companionship, and neighborhoods grow stronger.
+              ShareSkippy connects dog owners with dog lovers for free walks, hikes, cuddles, and adventures — all without the cost or full-time responsibility of ownership. Dogs get exercise and love, humans get companionship, and neighborhoods grow stronger.
             </p>
 
             {/* Carousel Messages */}
@@ -217,12 +217,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Why WalkSkippy Section */}
+      {/* Why ShareSkippy Section */}
       <section className="py-20 bg-gradient-to-r from-blue-50 to-indigo-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Why WalkSkippy?
+              Why ShareSkippy?
             </h2>
           </div>
 
@@ -400,7 +400,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
-              <h3 className="text-xl font-bold mb-4">WalkSkippy</h3>
+              <h3 className="text-xl font-bold mb-4">ShareSkippy</h3>
               <p className="text-gray-400">
                 Connecting neighbors through pet care and building stronger communities.
               </p>
@@ -430,7 +430,7 @@ export default function Home() {
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 WalkSkippy. All rights reserved.</p>
+            <p>&copy; 2024 ShareSkippy. All rights reserved.</p>
           </div>
         </div>
       </footer>

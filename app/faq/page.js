@@ -6,23 +6,23 @@ import Link from 'next/link';
 const faqData = [
   // General Questions
   {
-    question: "What is WalkSkippy?",
-    answer: "WalkSkippy is a community-driven platform that connects pet owners with local pet lovers. We help neighbors find trusted people to walk their dogs, provide companionship, or give pets new experiences like swimming and hiking adventures.",
+    question: "What is ShareSkippy?",
+    answer: "ShareSkippy is a community-driven platform that connects pet owners with local pet lovers. We help neighbors find trusted people to walk their dogs, provide companionship, or give pets new experiences like swimming and hiking adventures.",
     category: "general"
   },
   {
-    question: "How does WalkSkippy work?",
+    question: "How does ShareSkippy work?",
     answer: "Pet owners can post requests for dog walking or pet care, while pet lovers can share their availability to help. Users connect through our secure messaging system, meet up safely, and build lasting community relationships.",
     category: "general"
   },
   {
-    question: "Is WalkSkippy free to use?",
-    answer: "Yes! WalkSkippy is completely free to use. We believe in building community connections without financial barriers. Users can arrange their own terms for any services provided.",
+    question: "Is ShareSkippy free to use?",
+    answer: "Yes! ShareSkippy is completely free to use. We believe in building community connections without financial barriers. Users can arrange their own terms for any services provided.",
     category: "general"
   },
   {
-    question: "What areas does WalkSkippy serve?",
-    answer: "WalkSkippy serves communities across various neighborhoods. We use location-based matching to connect you with people in your local area, typically within a few miles of your location.",
+    question: "What areas does ShareSkippy serve?",
+    answer: "ShareSkippy serves communities across various neighborhoods. We use location-based matching to connect you with people in your local area, typically within a few miles of your location.",
     category: "general"
   },
 
@@ -173,7 +173,7 @@ export default function FAQPage() {
               Frequently Asked Questions
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Everything you need to know about WalkSkippy and how to get the most out of our community
+              Everything you need to know about ShareSkippy and how to get the most out of our community
             </p>
           </div>
         </div>

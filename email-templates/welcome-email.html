@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to ShareSkippy!</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+        .tagline {
+            color: #6b7280;
+            font-size: 16px;
+        }
+        .content {
+            margin-bottom: 30px;
+        }
+        .cta-button {
+            display: inline-block;
+            background-color: #2563eb;
+            color: white;
+            padding: 16px 32px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            text-align: center;
+            margin: 20px 0;
+            transition: background-color 0.2s;
+        }
+        .cta-button:hover {
+            background-color: #1d4ed8;
+        }
+        .features {
+            background-color: #f8fafc;
+            padding: 24px;
+            border-radius: 8px;
+            margin: 24px 0;
+        }
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+        .feature-icon {
+            margin-right: 12px;
+            font-size: 18px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        .highlight {
+            background-color: #fef3c7;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #f59e0b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🐕 ShareSkippy</div>
+            <div class="tagline">Welcome to the community of dog lovers!</div>
+        </div>
+        
+        <div class="content">
+            <h2>Welcome to ShareSkippy, {{userName}}! 🎉</h2>
+            
+            <p>We're thrilled to have you join our community of dog lovers! ShareSkippy is all about connecting dog owners and dog enthusiasts to create amazing experiences together.</p>
+            
+            <div class="highlight">
+                <strong>🚀 Ready to get started?</strong> Your account is all set up and ready to go!
+            </div>
+            
+            <div class="features">
+                <h3 style="margin-top: 0; color: #2563eb;">Here's what you can do on ShareSkippy:</h3>
+                
+                <div class="feature-item">
+                    <span class="feature-icon">📅</span>
+                    <span><strong>Schedule Playdates:</strong> Connect with other dog owners for fun meetups</span>
+                </div>
+                
+                <div class="feature-item">
+                    <span class="feature-icon">💬</span>
+                    <span><strong>Chat & Connect:</strong> Message fellow dog lovers in your area</span>
+                </div>
+                
+                <div class="feature-item">
+                    <span class="feature-icon">⭐</span>
+                    <span><strong>Share Reviews:</strong> Rate experiences and help others find great connections</span>
+                </div>
+                
+                <div class="feature-item">
+                    <span class="feature-icon">🗺️</span>
+                    <span><strong>Discover Places:</strong> Find dog-friendly spots and share your favorites</span>
+                </div>
+                
+                <div class="feature-item">
+                    <span class="feature-icon">🐾</span>
+                    <span><strong>Share Availability:</strong> Let others know when you're available for dog activities</span>
+                </div>
+            </div>
+            
+            <div style="text-align: center;">
+                <a href="{{appUrl}}" class="cta-button">Start Exploring ShareSkippy</a>
+            </div>
+            
+            <p><strong>Pro tip:</strong> Complete your profile with photos of your furry friend to get more connection requests! The more details you share, the better matches you'll find.</p>
+            
+            <p>If you have any questions or need help getting started, don't hesitate to reach out to our support team. We're here to help make your ShareSkippy experience amazing!</p>
+        </div>
+        
+        <div class="footer">
+            <p>Happy tails and wagging adventures,<br>The ShareSkippy Team 🐕</p>
+            <p style="margin-top: 20px; font-size: 12px;">
+                Questions? Reply to this email or visit our <a href="{{appUrl}}/faq" style="color: #2563eb;">FAQ page</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
