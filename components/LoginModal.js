@@ -35,6 +35,7 @@ export default function LoginModal({ isOpen, onClose }) {
           toast.error("Failed to sign in with Google. Please try again.");
         }
       } else if (type === "magic_link") {
+        console.log("Magic link redirect URL:", redirectURL);
         const { error } = await supabase.auth.signInWithOtp({
           email,
           options: {
