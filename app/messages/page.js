@@ -15,6 +15,7 @@ export default function MessagesPage() {
   const [newMessage, setNewMessage] = useState('');
   const [messageModal, setMessageModal] = useState({ isOpen: false, recipient: null, availabilityPost: null });
   const [meetingModal, setMeetingModal] = useState({ isOpen: false, recipient: null, conversation: null });
+  const [showConversations, setShowConversations] = useState(false);
 
   useEffect(() => {
     if (user && !authLoading) {
@@ -137,6 +138,23 @@ export default function MessagesPage() {
         .update({ last_message_at: new Date().toISOString() })
         .eq('id', selectedConversation.id);
 
+      // Send email notification to recipient
+      try {
+        await fetch('/api/emails/new-message', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            recipientId: selectedConversation.otherParticipant.id,
+            senderId: user.id,
+            messagePreview: newMessage.trim().substring(0, 100),
+            messageId: 'new-message' // We don't have the message ID here, but the email API can handle it
+          })
+        });
+      } catch (emailError) {
+        console.error('Error sending message notification email:', emailError);
+        // Don't fail the message sending if email fails
+      }
+
       // Refresh messages and conversations
       setNewMessage('');
       await fetchMessages(selectedConversation.id);
@@ -241,11 +259,17 @@ export default function MessagesPage() {
         </div>
 
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          <div className="flex h-[600px]">
+          <div className="flex flex-col lg:flex-row h-[600px]">
             {/* Conversations Sidebar */}
-            <div className="w-1/3 border-r border-gray-200 bg-gray-50">
-              <div className="p-4 border-b border-gray-200">
+            <div className={`w-full lg:w-1/3 border-r border-gray-200 bg-gray-50 ${showConversations ? 'block' : 'hidden lg:block'}`}>
+              <div className="p-4 border-b border-gray-200 flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-gray-900">Conversations</h2>
+                <button
+                  onClick={() => setShowConversations(false)}
+                  className="lg:hidden text-gray-500 hover:text-gray-700"
+                >
+                  ✕
+                </button>
               </div>
               
               <div className="overflow-y-auto h-full">
@@ -262,7 +286,10 @@ export default function MessagesPage() {
                   conversations.map((conversation) => (
                     <div
                       key={conversation.id}
-                      onClick={() => setSelectedConversation(conversation)}
+                      onClick={() => {
+                        setSelectedConversation(conversation);
+                        setShowConversations(false); // Hide sidebar on mobile after selection
+                      }}
                       className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-100 transition-colors ${
                         selectedConversation?.id === conversation.id ? 'bg-blue-50 border-blue-200' : ''
                       }`}
@@ -298,13 +325,19 @@ export default function MessagesPage() {
             </div>
 
             {/* Messages Area */}
-            <div className="flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col w-full lg:w-auto">
               {selectedConversation ? (
                 <>
                   {/* Conversation Header */}
                   <div className="p-4 border-b border-gray-200 bg-white">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
                       <div className="flex items-center space-x-3">
+                        <button
+                          onClick={() => setShowConversations(true)}
+                          className="lg:hidden text-gray-500 hover:text-gray-700 mr-2"
+                        >
+                          ←
+                        </button>
                         {selectedConversation.profilePhoto ? (
                           <img
                             src={selectedConversation.profilePhoto}
@@ -325,13 +358,13 @@ export default function MessagesPage() {
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-3">
-                        <div className="text-sm text-gray-500">
+                      <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
+                        <div className="text-sm text-gray-500 truncate">
                           {selectedConversation.availability?.title}
                         </div>
                         <button
                           onClick={openMeetingModal}
-                          className="px-3 py-1.5 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 transition-colors"
+                          className="px-3 py-1.5 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 transition-colors whitespace-nowrap"
                         >
                           📅 Schedule Meeting
                         </button>
@@ -366,7 +399,7 @@ export default function MessagesPage() {
 
                   {/* Message Input */}
                   <div className="p-4 border-t border-gray-200">
-                    <form onSubmit={sendMessage} className="flex space-x-3">
+                    <form onSubmit={sendMessage} className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
                       <input
                         type="text"
                         value={newMessage}
@@ -378,7 +411,7 @@ export default function MessagesPage() {
                       <button
                         type="submit"
                         disabled={sending || !newMessage.trim()}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                       >
                         {sending ? 'Sending...' : 'Send'}
                       </button>
@@ -390,7 +423,13 @@ export default function MessagesPage() {
                   <div className="text-center text-gray-500">
                     <div className="text-6xl mb-4">💬</div>
                     <h3 className="text-xl font-semibold mb-2">Select a conversation</h3>
-                    <p>Choose a conversation from the sidebar to start messaging</p>
+                    <p className="mb-4">Choose a conversation from the sidebar to start messaging</p>
+                    <button
+                      onClick={() => setShowConversations(true)}
+                      className="lg:hidden px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                    >
+                      View Conversations
+                    </button>
                   </div>
                 </div>
               )}

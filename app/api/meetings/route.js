@@ -153,6 +153,32 @@ export async function POST(request) {
 
     if (meetingError) throw meetingError;
 
+    // Send meeting confirmation emails to both participants
+    try {
+      // Send to requester
+      await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/emails/meeting-scheduled`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          meetingId: meeting.id,
+          userId: user.id
+        })
+      });
+
+      // Send to recipient
+      await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/emails/meeting-scheduled`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          meetingId: meeting.id,
+          userId: recipient_id
+        })
+      });
+    } catch (emailError) {
+      console.error('Error sending meeting confirmation emails:', emailError);
+      // Don't fail the meeting creation if email fails
+    }
+
     return NextResponse.json({ meeting });
 
   } catch (error) {

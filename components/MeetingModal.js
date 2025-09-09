@@ -118,6 +118,32 @@ export default function MeetingModal({ isOpen, onClose, recipient, conversation,
       });
       onClose();
       
+      // Send meeting confirmation emails to both participants
+      try {
+        // Send to requester
+        await fetch('/api/emails/meeting-scheduled', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            meetingId: meeting.id,
+            userId: user.id
+          })
+        });
+
+        // Send to recipient
+        await fetch('/api/emails/meeting-scheduled', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            meetingId: meeting.id,
+            userId: recipient.id
+          })
+        });
+      } catch (emailError) {
+        console.error('Error sending meeting confirmation emails:', emailError);
+        // Don't fail the meeting creation if email fails
+      }
+
       // Call the callback to refresh messages
       if (onMeetingCreated) {
         onMeetingCreated();

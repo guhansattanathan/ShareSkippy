@@ -738,7 +738,7 @@ export default function EditAvailability() {
             <div className="bg-white rounded-xl p-6 shadow-md border border-gray-200">
               <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
                 <span className="mr-2">👤</span>
-                About the Owner
+                {availability?.post_type === 'dog_available' ? 'About the Owner' : 'About the PetPal'}
               </h2>
 
               <div className="text-center mb-6">

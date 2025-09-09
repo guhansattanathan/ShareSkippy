@@ -30,6 +30,20 @@ progress::-webkit-progress-value {
     @apply bg-white text-black;
   }
   
+  /* Override DaisyUI input styling to ensure white backgrounds */
+  .input, .input-bordered {
+    @apply bg-white text-black border-gray-300 !important;
+  }
+  
+  .input:focus, .input-bordered:focus {
+    @apply bg-white text-black border-blue-500 ring-2 ring-blue-200 !important;
+  }
+  
+  /* Override DaisyUI button styling for sign-in buttons */
+  .btn.btn-block {
+    @apply bg-white text-black border-gray-300 hover:bg-gray-50 !important;
+  }
+  
   /* Ensure input text is black when typing */
   input::placeholder, textarea::placeholder {
     @apply text-gray-500;

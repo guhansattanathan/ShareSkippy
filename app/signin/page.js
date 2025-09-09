@@ -119,7 +119,7 @@ export default function Login() {
 
       <div className="space-y-8 max-w-xl mx-auto">
         <button
-          className="btn btn-block"
+          className="btn btn-block bg-white text-black border-gray-300 hover:bg-gray-50"
           onClick={(e) =>
             handleSignup(e, { type: "oauth", provider: "google" })
           }
@@ -168,7 +168,7 @@ export default function Login() {
             value={email}
             autoComplete="email"
             placeholder="tom@cruise.com"
-            className="input input-bordered w-full placeholder:opacity-60 text-black"
+            className="input input-bordered w-full placeholder:opacity-60 text-black bg-white border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
             onChange={(e) => setEmail(e.target.value)}
           />
 

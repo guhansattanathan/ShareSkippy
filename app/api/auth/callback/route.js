@@ -36,6 +36,56 @@ export async function GET(req) {
       }
 
       console.log("Session created successfully for user:", data.user?.id);
+      
+      // Send welcome email for new users
+      try {
+        console.log('🔍 Debug: Checking for new user:', data.user.email, 'Created at:', data.user.created_at);
+        
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', data.user.id)
+          .single();
+          
+        console.log('🔍 Debug: Profile lookup result:', { profile: !!profile, error: profileError?.message });
+          
+        if (!profileError && profile) {
+          // Check if this is a new user (created within last 5 minutes)
+          const userCreatedAt = new Date(data.user.created_at);
+          const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+          
+          console.log('🔍 Debug: User created at:', userCreatedAt, 'Five minutes ago:', fiveMinutesAgo, 'Is new user:', userCreatedAt > fiveMinutesAgo);
+          
+          // TEMPORARY: Send welcome email for all users to test
+          // TODO: Restore the timing check once we confirm it's working
+          if (true) { // userCreatedAt > fiveMinutesAgo) {
+            console.log('📧 Debug: Attempting to send welcome email...');
+            
+            // Send welcome email
+            const emailResponse = await fetch(`${requestUrl.origin}/api/emails/welcome`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ userId: data.user.id })
+            });
+            
+            const emailResult = await emailResponse.json();
+            console.log('📧 Debug: Welcome email response:', emailResult);
+            
+            if (emailResponse.ok) {
+              console.log('✅ Welcome email sent successfully to:', data.user.email);
+            } else {
+              console.error('❌ Welcome email failed:', emailResult);
+            }
+          } else {
+            console.log('⏰ Debug: User is not new (created more than 5 minutes ago)');
+          }
+        } else {
+          console.log('❌ Debug: Profile not found or error:', profileError?.message);
+        }
+      } catch (emailError) {
+        console.error('❌ Error in welcome email process:', emailError);
+        // Don't fail the login process if email fails
+      }
     } catch (error) {
       console.error("Unexpected error during session exchange:", error);
       return NextResponse.redirect(new URL("/signin?error=unexpected_error", requestUrl.origin));

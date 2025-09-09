@@ -65,6 +65,23 @@ export async function POST(request) {
 
     if (messageError) throw messageError;
 
+    // Send email notification to recipient
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/emails/new-message`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          recipientId: recipient_id,
+          senderId: user.id,
+          messagePreview: content.substring(0, 100),
+          messageId: message.id
+        })
+      });
+    } catch (emailError) {
+      console.error('Error sending message notification email:', emailError);
+      // Don't fail the message creation if email fails
+    }
+
     return NextResponse.json({ 
       success: true, 
       message: message,
