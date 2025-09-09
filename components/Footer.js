@@ -8,8 +8,8 @@ const Footer = () => {
   return (
     <footer className="bg-indigo-600 text-white">
       <div className="max-w-7xl mx-auto px-8 py-16">
-        {/* Top section with four columns */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        {/* Top section with three columns */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* Left Column - Brand Information */}
           <div className="text-center md:text-left">
             <h3 className="text-2xl font-bold mb-4 text-white">ShareSkippy</h3>
@@ -40,25 +40,6 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Third Column - Community Guidelines */}
-          <div className="text-center md:text-left">
-            <h3 className="text-xl font-bold mb-4 text-white">Community Guidelines</h3>
-            <div className="flex flex-col gap-2 text-sm">
-              <div className="text-white">
-                <span className="font-medium">🤝 Safety First:</span> Meet in public places, bring vaccination records
-              </div>
-              <div className="text-white">
-                <span className="font-medium">🐕 Dog Etiquette:</span> Keep dogs on leash, clean up after them
-              </div>
-              <div className="text-white">
-                <span className="font-medium">💬 Communication:</span> Be clear about expectations, respond promptly
-              </div>
-              <div className="text-white">
-                <span className="font-medium">🏆 Building Trust:</span> Start with short meetups, build relationships gradually
-              </div>
-            </div>
-          </div>
-
           {/* Right Column - Legal */}
           <div className="text-center md:text-left">
             <h3 className="text-xl font-bold mb-4 text-white">Legal</h3>
@@ -68,6 +49,9 @@ const Footer = () => {
               </Link>
               <Link href="/privacy-policy" className="text-white hover:text-gray-300 transition-colors">
                 Privacy Policy
+              </Link>
+              <Link href="/community-guidelines" className="text-white hover:text-gray-300 transition-colors">
+                Community Guidelines
               </Link>
               <Link href="/safety" className="text-white hover:text-gray-300 transition-colors">
                 Safety Guidelines
