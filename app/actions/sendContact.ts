@@ -48,24 +48,82 @@ export async function sendContact(formData: FormData) {
       };
     }
 
-    // TODO: Send email via Resend/SMTP or persist in database
-    // For now, we'll just log the contact form submission
-    console.log('Contact form submission:', {
-      name: parsed.data.name,
-      email: parsed.data.email,
-      category: parsed.data.category,
-      subject: parsed.data.subject,
-      message: parsed.data.message,
-      timestamp: new Date().toISOString(),
-      ip: ip
-    });
+    // Send email to support
+    try {
+      const { sendEmail } = await import('@/libs/resend');
+      
+      const emailSubject = `[${parsed.data.category.toUpperCase()}] ${parsed.data.subject}`;
+      const emailHtml = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #333; border-bottom: 2px solid #8b5cf6; padding-bottom: 10px;">
+            New Contact Form Submission
+          </h2>
+          
+          <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="color: #555; margin-top: 0;">Contact Details</h3>
+            <p><strong>Name:</strong> ${parsed.data.name}</p>
+            <p><strong>Email:</strong> ${parsed.data.email}</p>
+            <p><strong>Category:</strong> ${parsed.data.category}</p>
+            <p><strong>Subject:</strong> ${parsed.data.subject}</p>
+          </div>
+          
+          <div style="background: #fff; padding: 20px; border: 1px solid #e9ecef; border-radius: 8px;">
+            <h3 style="color: #555; margin-top: 0;">Message</h3>
+            <p style="white-space: pre-wrap; line-height: 1.6;">${parsed.data.message}</p>
+          </div>
+          
+          <div style="margin-top: 20px; padding: 15px; background: #e3f2fd; border-radius: 8px; font-size: 14px; color: #666;">
+            <p><strong>Reply directly to this email to respond to ${parsed.data.name}.</strong></p>
+            <p>This message was sent from the ShareSkippy contact form.</p>
+          </div>
+        </div>
+      `;
+      
+      const emailText = `
+New Contact Form Submission
 
-    // In production, you would:
-    // 1. Send email via Resend: await resend.emails.send({...})
-    // 2. Or save to database: await db.contactSubmissions.create({...})
-    // 3. Or send to a webhook/API endpoint
+Contact Details:
+- Name: ${parsed.data.name}
+- Email: ${parsed.data.email}
+- Category: ${parsed.data.category}
+- Subject: ${parsed.data.subject}
 
-    return { ok: true };
+Message:
+${parsed.data.message}
+
+---
+Reply directly to this email to respond to ${parsed.data.name}.
+This message was sent from the ShareSkippy contact form.
+      `;
+
+      await sendEmail({
+        to: 'kcolban@gmail.com',
+        subject: emailSubject,
+        text: emailText,
+        html: emailHtml,
+        replyTo: parsed.data.email, // This allows you to reply directly to the user
+      });
+
+      // Also log for debugging
+      console.log('Contact form submission sent:', {
+        name: parsed.data.name,
+        email: parsed.data.email,
+        category: parsed.data.category,
+        subject: parsed.data.subject,
+        timestamp: new Date().toISOString(),
+        ip: ip
+      });
+
+      return { ok: true };
+    } catch (emailError) {
+      console.error('Error sending contact email:', emailError);
+      return { 
+        ok: false, 
+        errors: { 
+          _: ['Failed to send message. Please try again or contact support directly at kcolban@gmail.com.'] 
+        } 
+      };
+    }
 
   } catch (error) {
     console.error('Error processing contact form:', error);
