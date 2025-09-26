@@ -1,9 +1,9 @@
-import { createClient } from '@/libs/supabase/server';
+import { createServiceClient } from '@/libs/supabase/server';
 import { sendFollowUp3DaysEmail } from '@/libs/emailTemplates';
 
 export async function GET() {
   try {
-    const supabase = createClient();
+    const supabase = createServiceClient();
 
     // Get a test user (you can modify this to target specific users)
     const { data: testUser, error: userError } = await supabase
