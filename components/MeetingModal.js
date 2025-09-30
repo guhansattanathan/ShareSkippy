@@ -3,6 +3,14 @@ import { useState } from 'react';
 import { supabase } from '@/libs/supabase';
 import DatePicker from '@/components/ui/DatePicker';
 
+// Utility function to format date as YYYY-MM-DD without timezone issues
+const formatDateForInput = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 export default function MeetingModal({ isOpen, onClose, recipient, conversation, onMeetingCreated }) {
   const [formData, setFormData] = useState({
     title: '',
@@ -251,7 +259,7 @@ export default function MeetingModal({ isOpen, onClose, recipient, conversation,
                 <DatePicker
                   selectedDate={formData.start_date}
                   onDateSelect={(date) => setFormData(prev => ({ ...prev, start_date: date }))}
-                  minDate={new Date().toISOString().split('T')[0]}
+                  minDate={formatDateForInput(new Date())}
                   placeholder="Select start date"
                 />
               </div>
@@ -280,8 +288,8 @@ export default function MeetingModal({ isOpen, onClose, recipient, conversation,
                 <DatePicker
                   selectedDate={formData.end_date}
                   onDateSelect={(date) => setFormData(prev => ({ ...prev, end_date: date }))}
-                  minDate={formData.start_date || new Date().toISOString().split('T')[0]}
-                  maxDate={formData.start_date ? new Date(new Date(formData.start_date).getTime() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] : null}
+                  minDate={formData.start_date || formatDateForInput(new Date())}
+                  maxDate={formData.start_date ? formatDateForInput(new Date(new Date(formData.start_date).getTime() + 30 * 24 * 60 * 60 * 1000)) : null}
                   placeholder="Select end date"
                 />
               </div>

@@ -240,7 +240,13 @@ export default function AddDogPage() {
                 value={formData.birthday}
                 onChange={handleInputChange}
                 required
-                max={new Date().toISOString().split('T')[0]}
+                max={(() => {
+                  const today = new Date();
+                  const year = today.getFullYear();
+                  const month = String(today.getMonth() + 1).padStart(2, '0');
+                  const day = String(today.getDate()).padStart(2, '0');
+                  return `${year}-${month}-${day}`;
+                })()}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
               />
               {formData.birthday && (
