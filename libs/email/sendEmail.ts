@@ -80,6 +80,14 @@ export async function sendEmail({
       finalText = template.text;
     }
 
+    // Ensure we have required content
+    if (!finalSubject) {
+      throw new Error(`Subject is required for email type: ${emailType}`);
+    }
+    if (!finalHtml && !finalText) {
+      throw new Error(`HTML or text content is required for email type: ${emailType}`);
+    }
+
     // Create email event record
     const { data: emailEvent, error: eventError } = await supabase
       .from('email_events')
@@ -102,9 +110,9 @@ export async function sendEmail({
       // Send email via Resend
       const resendResult = await resendSendEmail({
         to,
-        subject: finalSubject!,
-        html: finalHtml,
-        text: finalText
+        subject: finalSubject,
+        html: finalHtml || undefined,
+        text: finalText || undefined
       });
 
       // Update event with success
