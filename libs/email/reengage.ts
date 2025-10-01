@@ -149,13 +149,20 @@ export async function getReengageCandidates(): Promise<Array<{
   const userMap = new Map();
   for (const user of users) {
     if (!userMap.has(user.id)) {
+      // user.user_activity is an array from the join, get the most recent
+      const mostRecentActivity = Array.isArray(user.user_activity) 
+        ? user.user_activity[0] 
+        : user.user_activity;
+      
       userMap.set(user.id, {
         id: user.id,
         email: user.email,
         first_name: user.first_name,
         last_name: user.last_name,
-        last_login: user.user_activity.at,
-        days_since_login: Math.floor((Date.now() - new Date(user.user_activity.at).getTime()) / (1000 * 60 * 60 * 24))
+        last_login: mostRecentActivity?.at,
+        days_since_login: mostRecentActivity?.at 
+          ? Math.floor((Date.now() - new Date(mostRecentActivity.at).getTime()) / (1000 * 60 * 60 * 24))
+          : 999 // If no activity, consider them very inactive
       });
     }
   }
