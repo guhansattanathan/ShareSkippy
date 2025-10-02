@@ -87,9 +87,9 @@ describe('Email API Integration Tests', () => {
     });
   });
 
-  describe('POST /api/emails/new-message', () => {
+  describe('POST /api/emails/send-new-message', () => {
     it('should send new message notification', async () => {
-      const { default: handler } = await import('@/app/api/emails/new-message/route');
+      const { default: handler } = await import('@/app/api/emails/send-new-message/route');
       
       mockSupabase.single
         .mockResolvedValueOnce({
@@ -105,7 +105,7 @@ describe('Email API Integration Tests', () => {
           error: null
         });
 
-      const request = new NextRequest('http://localhost:3000/api/emails/new-message', {
+      const request = new NextRequest('http://localhost:3000/api/emails/send-new-message', {
         method: 'POST',
         body: JSON.stringify({
           recipientId: 'recipient-id',
@@ -123,7 +123,7 @@ describe('Email API Integration Tests', () => {
     });
 
     it('should skip email if notifications disabled', async () => {
-      const { default: handler } = await import('@/app/api/emails/new-message/route');
+      const { default: handler } = await import('@/app/api/emails/send-new-message/route');
       
       mockSupabase.single
         .mockResolvedValueOnce({
@@ -139,7 +139,7 @@ describe('Email API Integration Tests', () => {
           error: null
         });
 
-      const request = new NextRequest('http://localhost:3000/api/emails/new-message', {
+      const request = new NextRequest('http://localhost:3000/api/emails/send-new-message', {
         method: 'POST',
         body: JSON.stringify({
           recipientId: 'recipient-id',

@@ -140,7 +140,7 @@ export default function MessagesPage() {
 
       // Send email notification to recipient
       try {
-        await fetch('/api/emails/new-message', {
+        await fetch('/api/emails/send-new-message', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

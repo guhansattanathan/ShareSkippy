@@ -865,7 +865,7 @@ export default function CommunityPage() {
                           ? 'bg-blue-100 text-blue-800' 
                           : 'bg-green-100 text-green-800'
                       }`}>
-                        {post.post_type === 'dog_available' ? '🐕 Dog Available' : '🤝 PetPal Available'}
+                        {post.post_type === 'dog_available' ? 'Dog Available' : '🤝 PetPal Available'}
                       </span>
                     </div>
                     

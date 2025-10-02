@@ -12,7 +12,7 @@ This guide covers the complete email system setup for ShareSkippy, including all
 ### 2. New Message Notification
 - **Trigger**: When a user receives a new message
 - **Template**: `email-templates/new-message-notification.html`
-- **API Endpoint**: `POST /api/emails/new-message`
+- **API Endpoint**: `POST /api/emails/send-new-message`
 
 ### 3. Meeting Scheduled Confirmation
 - **Trigger**: When a meeting is successfully scheduled
@@ -239,7 +239,7 @@ Add notification to your message creation:
 
 ```javascript
 // After creating a message
-await fetch('/api/emails/new-message', {
+await fetch('/api/emails/send-new-message', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({

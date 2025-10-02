@@ -1,0 +1,25 @@
+New Message on ShareSkippy
+
+Hi {{recipientName}}!
+
+You've received a new message on ShareSkippy from {{senderName}}.
+
+Message Preview:
+"{{messagePreview}}"
+
+Time: {{messageTime}}
+
+View your messages: {{appUrl}}/messages
+
+Quick tip: Responding quickly helps build great connections in our community. The faster you reply, the more likely you are to schedule that perfect playdate!
+
+Happy chatting,
+The ShareSkippy Team 🐕
+
+---
+ShareSkippy LLC
+San Francisco, CA 94102
+United States
+
+You received this notification because you have a new message on ShareSkippy. 
+You can manage your notification preferences in your account settings or unsubscribe here: {{unsubscribeUrl}}
