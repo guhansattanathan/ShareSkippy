@@ -37,6 +37,95 @@ export async function GET(req) {
 
       console.log("Session created successfully for user:", data.user?.id);
       
+      // Extract Google user metadata for name pre-filling
+      try {
+        const userMetadata = data.user?.user_metadata || {};
+        const googleName = userMetadata?.full_name || userMetadata?.name;
+        const googleGivenName = userMetadata?.given_name || userMetadata?.first_name;
+        const googleFamilyName = userMetadata?.family_name || userMetadata?.last_name;
+        const googlePicture = userMetadata?.picture || userMetadata?.avatar_url;
+        
+        console.log('🔍 Debug: Google user metadata:', {
+          full_name: googleName,
+          given_name: googleGivenName,
+          family_name: googleFamilyName,
+          picture: googlePicture
+        });
+        
+        // Check if profile exists
+        const { data: existingProfile, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', data.user.id)
+          .single();
+          
+        console.log('🔍 Debug: Profile lookup result:', { profile: !!existingProfile, error: profileError?.message });
+        
+        // If profile doesn't exist, create it with Google data
+        if (profileError && profileError.code === 'PGRST116') {
+          console.log('📝 Creating new profile with Google data...');
+          
+          const profileData = {
+            id: data.user.id,
+            email: data.user.email,
+            first_name: googleGivenName || '',
+            last_name: googleFamilyName || '',
+            profile_photo_url: googlePicture || null
+          };
+          
+          const { data: newProfile, error: createError } = await supabase
+            .from('profiles')
+            .insert(profileData)
+            .select()
+            .single();
+            
+          if (createError) {
+            console.error('❌ Error creating profile:', createError);
+          } else {
+            console.log('✅ Profile created with Google data:', newProfile);
+          }
+        } else if (existingProfile) {
+          // Update existing profile with Google data if name fields are empty
+          const updateData = {};
+          let needsUpdate = false;
+          
+          if (!existingProfile.first_name && googleGivenName) {
+            updateData.first_name = googleGivenName;
+            needsUpdate = true;
+          }
+          
+          if (!existingProfile.last_name && googleFamilyName) {
+            updateData.last_name = googleFamilyName;
+            needsUpdate = true;
+          }
+          
+          if (!existingProfile.profile_photo_url && googlePicture) {
+            updateData.profile_photo_url = googlePicture;
+            needsUpdate = true;
+          }
+          
+          if (needsUpdate) {
+            console.log('📝 Updating existing profile with Google data...');
+            
+            const { data: updatedProfile, error: updateError } = await supabase
+              .from('profiles')
+              .update(updateData)
+              .eq('id', data.user.id)
+              .select()
+              .single();
+              
+            if (updateError) {
+              console.error('❌ Error updating profile:', updateError);
+            } else {
+              console.log('✅ Profile updated with Google data:', updatedProfile);
+            }
+          }
+        }
+      } catch (metadataError) {
+        console.error('❌ Error processing Google metadata:', metadataError);
+        // Don't fail the login process if metadata processing fails
+      }
+      
       // Send welcome email for new users
       try {
         console.log('🔍 Debug: Checking for new user:', data.user.email, 'Created at:', data.user.created_at);

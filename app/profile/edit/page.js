@@ -75,11 +75,23 @@ export default function ProfileEditPage() {
         }
       }
       
+      // Get Google auth metadata for pre-filling
+      const userMetadata = user?.user_metadata || {};
+      const googleGivenName = userMetadata?.given_name || userMetadata?.first_name;
+      const googleFamilyName = userMetadata?.family_name || userMetadata?.last_name;
+      const googlePicture = userMetadata?.picture || userMetadata?.avatar_url;
+      
+      console.log('🔍 Debug: Google user metadata for pre-filling:', {
+        given_name: googleGivenName,
+        family_name: googleFamilyName,
+        picture: googlePicture
+      });
+      
       if (data) {
         console.log('Profile loaded successfully:', data);
         setProfile({
-          first_name: data.first_name || '',
-          last_name: data.last_name || '',
+          first_name: data.first_name || googleGivenName || '',
+          last_name: data.last_name || googleFamilyName || '',
           phone_number: data.phone_number || '',
           role: data.role || '',
           emergency_contact_name: data.emergency_contact_name || '',
@@ -95,7 +107,7 @@ export default function ProfileEditPage() {
           support_preferences: data.support_preferences || [],
           support_story: data.support_story || '',
           other_support_description: data.other_support_description || '',
-          profile_photo_url: data.profile_photo_url || '',
+          profile_photo_url: data.profile_photo_url || googlePicture || '',
           display_lat: data.display_lat || null,
           display_lng: data.display_lng || null,
           neighborhood: data.neighborhood || '',
@@ -105,7 +117,34 @@ export default function ProfileEditPage() {
           zip_code: data.zip_code || ''
         });
       } else {
-        console.log('No profile data found, using empty defaults');
+        console.log('No profile data found, using Google data for pre-filling');
+        setProfile({
+          first_name: googleGivenName || '',
+          last_name: googleFamilyName || '',
+          phone_number: '',
+          role: '',
+          emergency_contact_name: '',
+          emergency_contact_number: '',
+          emergency_contact_email: '',
+          bio: '',
+          facebook_url: '',
+          instagram_url: '',
+          linkedin_url: '',
+          airbnb_url: '',
+          other_social_url: '',
+          community_support_badge: '',
+          support_preferences: [],
+          support_story: '',
+          other_support_description: '',
+          profile_photo_url: googlePicture || '',
+          display_lat: null,
+          display_lng: null,
+          neighborhood: '',
+          city: '',
+          street_address: '',
+          state: '',
+          zip_code: ''
+        });
       }
 
     } catch (err) {
@@ -423,39 +462,6 @@ export default function ProfileEditPage() {
               </select>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Emergency Contact *
-              </label>
-              <div className="space-y-3">
-                <input
-                  type="text"
-                  name="emergency_contact_name"
-                  value={profile.emergency_contact_name}
-                  onChange={handleInputChange}
-                  required
-                  placeholder="Name"
-                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
-                />
-                <input
-                  type="tel"
-                  name="emergency_contact_number"
-                  value={profile.emergency_contact_number}
-                  onChange={handleInputChange}
-                  required
-                  placeholder="Phone Number"
-                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
-                />
-                <input
-                  type="email"
-                  name="emergency_contact_email"
-                  value={profile.emergency_contact_email}
-                  onChange={handleInputChange}
-                  placeholder="Email (optional)"
-                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
-                />
-              </div>
-            </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -709,6 +715,48 @@ export default function ProfileEditPage() {
             
             <div className="text-xs text-gray-500">
               💡 Your exact address is never shared publicly. Only your neighborhood and city are visible to help with community matching.
+            </div>
+          </div>
+        </div>
+
+        {/* Emergency Contact */}
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h2 className="text-lg font-semibold mb-4">Emergency Contact</h2>
+          <p className="text-sm text-gray-600 mb-4">
+            Optional emergency contact information for safety purposes.
+          </p>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Emergency Contact
+              </label>
+              <div className="space-y-3">
+                <input
+                  type="text"
+                  name="emergency_contact_name"
+                  value={profile.emergency_contact_name}
+                  onChange={handleInputChange}
+                  placeholder="Name"
+                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
+                />
+                <input
+                  type="tel"
+                  name="emergency_contact_number"
+                  value={profile.emergency_contact_number}
+                  onChange={handleInputChange}
+                  placeholder="Phone Number"
+                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
+                />
+                <input
+                  type="email"
+                  name="emergency_contact_email"
+                  value={profile.emergency_contact_email}
+                  onChange={handleInputChange}
+                  placeholder="Email (optional)"
+                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
+                />
+              </div>
             </div>
           </div>
         </div>
