@@ -49,8 +49,10 @@ export default function ProfilesList({ role, onMessage }) {
       const params = new URLSearchParams();
       if (cursor) params.append('cursor', cursor);
       params.append('limit', '24');
-      // Add cache-busting parameter
+      // Add multiple cache-busting parameters
       params.append('_t', Date.now());
+      params.append('_r', Math.random().toString(36).substring(7));
+      params.append('_v', '1.0.0');
 
       const response = await fetch(`/api/community/profiles?${params}`);
       

@@ -17,6 +17,7 @@ export default function CommunityPage() {
   const [messageModal, setMessageModal] = useState({ isOpen: false, recipient: null, availabilityPost: null });
   const [deletingPost, setDeletingPost] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [networkInfo, setNetworkInfo] = useState(null);
 
   const formatAvailabilitySchedule = (enabledDays, daySchedules) => {
     if (!enabledDays || !daySchedules) return [];
@@ -65,6 +66,26 @@ export default function CommunityPage() {
   useEffect(() => {
     const supabase = createClient();
     
+    // Detect network information for debugging
+    const detectNetwork = () => {
+      if (typeof window !== 'undefined' && 'navigator' in window) {
+        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        const info = {
+          userAgent: navigator.userAgent,
+          connectionType: connection?.effectiveType || 'unknown',
+          downlink: connection?.downlink || 'unknown',
+          rtt: connection?.rtt || 'unknown',
+          saveData: connection?.saveData || false,
+          online: navigator.onLine,
+          timestamp: new Date().toISOString()
+        };
+        setNetworkInfo(info);
+        console.log('Network info:', info);
+      }
+    };
+    
+    detectNetwork();
+    
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
@@ -86,6 +107,14 @@ export default function CommunityPage() {
       
       // Add cache-busting parameter to prevent stale data
       const cacheBuster = Date.now();
+      
+      // Force fresh data by clearing any cached queries
+      if (typeof window !== 'undefined' && window.location) {
+        // Add cache-busting to URL
+        const url = new URL(window.location);
+        url.searchParams.set('_t', cacheBuster.toString());
+        window.history.replaceState({}, '', url);
+      }
       
       // First, let's test if we can fetch any availability posts at all
       const { data: allPosts, error: allPostsError } = await supabase
@@ -402,6 +431,25 @@ export default function CommunityPage() {
   const refreshData = async () => {
     setRefreshing(true);
     try {
+      // Clear all caches aggressively
+      if (typeof window !== 'undefined') {
+        // Clear browser cache
+        if ('caches' in window) {
+          const cacheNames = await caches.keys();
+          await Promise.all(cacheNames.map(name => caches.delete(name)));
+        }
+        
+        // Clear localStorage and sessionStorage
+        localStorage.clear();
+        sessionStorage.clear();
+        
+        // Force reload of all resources
+        if ('serviceWorker' in navigator) {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(registrations.map(reg => reg.unregister()));
+        }
+      }
+      
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       await fetchAvailabilityData(user);
@@ -432,14 +480,21 @@ export default function CommunityPage() {
               </h1>
               <p className="text-sm sm:text-base text-gray-600">Connect with fellow dog lovers in your neighborhood</p>
             </div>
-            <button
-              onClick={refreshData}
-              disabled={refreshing}
-              className="mt-4 sm:mt-0 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition-colors text-sm flex items-center space-x-2 disabled:opacity-50"
-            >
-              <span>{refreshing ? '🔄' : '↻'}</span>
-              <span>{refreshing ? 'Refreshing...' : 'Refresh'}</span>
-            </button>
+            <div className="mt-4 sm:mt-0 flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2">
+              <button
+                onClick={refreshData}
+                disabled={refreshing}
+                className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition-colors text-sm flex items-center space-x-2 disabled:opacity-50"
+              >
+                <span>{refreshing ? '🔄' : '↻'}</span>
+                <span>{refreshing ? 'Refreshing...' : 'Refresh'}</span>
+              </button>
+              {networkInfo && (
+                <div className="text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded">
+                  {networkInfo.connectionType} • {networkInfo.online ? 'Online' : 'Offline'}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
