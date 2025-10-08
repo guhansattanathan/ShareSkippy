@@ -4,6 +4,7 @@ import ClientLayout from "@/components/LayoutClient";
 import AppLayout from "@/components/AppLayout";
 import { UserProvider } from "@/contexts/UserContext";
 import { QueryProvider } from "@/contexts/QueryProvider";
+import { Analytics } from "@vercel/analytics/react";
 import config from "@/config";
 import "./globals.css";
 
@@ -38,6 +39,8 @@ export default function RootLayout({ children }) {
 						</ClientLayout>
 					</UserProvider>
 				</QueryProvider>
+				{/* Vercel Analytics for tracking page views and user behavior */}
+				<Analytics />
 			</body>
 		</html>
 	);

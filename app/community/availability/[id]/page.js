@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/libs/supabase/client';
 import UserReviews from '../../../../components/UserReviews';
+import MessageModal from '../../../../components/MessageModal';
 
 export default function AvailabilityDetailPage() {
   const params = useParams();
@@ -12,12 +13,31 @@ export default function AvailabilityDetailPage() {
   const [availability, setAvailability] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [messageModal, setMessageModal] = useState({ isOpen: false, recipient: null, availabilityPost: null });
+  const [showStickyBar, setShowStickyBar] = useState(false);
 
   useEffect(() => {
     if (params.id) {
       fetchAvailabilityDetails();
     }
   }, [params.id]);
+
+  // Scroll detection for mobile sticky bar
+  useEffect(() => {
+    const handleScroll = () => {
+      const contactButton = document.getElementById('contact-button');
+      if (contactButton) {
+        const rect = contactButton.getBoundingClientRect();
+        const isVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
+        setShowStickyBar(!isVisible);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Check initial state
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [availability]);
 
   const fetchAvailabilityDetails = async () => {
     try {
@@ -187,6 +207,23 @@ export default function AvailabilityDetailPage() {
     return formattedSchedule;
   };
 
+  const openMessageModal = (recipient, availabilityPost) => {
+    setMessageModal({
+      isOpen: true,
+      recipient,
+      availabilityPost
+    });
+    // TODO: Analytics - cta_message_primary_clicked { placement, post_id, recipient_id }
+  };
+
+  const closeMessageModal = () => {
+    setMessageModal({
+      isOpen: false,
+      recipient: null,
+      availabilityPost: null
+    });
+  };
+
   const getSizeIcon = (size) => {
     // Handle weight ranges
     if (size && size.includes('-')) {
@@ -272,10 +309,12 @@ export default function AvailabilityDetailPage() {
             <span className="mr-2">←</span>
             Back to Community
           </Link>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
-            {availability.title}
-          </h1>
-          <div className="flex items-center space-x-4 text-gray-600">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                {availability.title}
+              </h1>
+              <div className="flex items-center space-x-4 text-gray-600">
             <span className={`px-3 py-1 rounded-full text-sm font-medium ${
               availability.post_type === 'dog_available' 
                 ? 'bg-blue-100 text-blue-800' 
@@ -288,6 +327,21 @@ export default function AvailabilityDetailPage() {
                 🚨 Urgent
               </span>
             )}
+              </div>
+            </div>
+            
+            {/* Primary Message CTA - Desktop */}
+            <div className="hidden lg:block">
+              <button
+                id="contact-button"
+                onClick={() => openMessageModal(availability.owner, availability)}
+                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold text-lg"
+                aria-label={`Message ${availability.owner?.first_name} about ${availability.allDogs?.[0]?.name || 'this post'}`}
+              >
+                💬 Message {availability.owner?.first_name}
+              </button>
+              {/* TODO: Analytics - cta_message_primary_viewed { placement: "header", device: "desktop" } */}
+            </div>
           </div>
         </div>
 
@@ -817,8 +871,11 @@ export default function AvailabilityDetailPage() {
               )}
 
               <div className="pt-4 border-t border-gray-200">
-                <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-medium">
-                  Contact Owner
+                <button 
+                  onClick={() => openMessageModal(availability.owner, availability)}
+                  className="w-full bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors font-medium text-sm"
+                >
+                  💬 Contact Owner
                 </button>
               </div>
             </div>
@@ -849,6 +906,28 @@ export default function AvailabilityDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Mobile Sticky Bottom Action Bar */}
+      {showStickyBar && !messageModal.isOpen && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 z-40 lg:hidden" style={{ paddingBottom: `calc(1rem + env(safe-area-inset-bottom))` }}>
+          <button
+            onClick={() => openMessageModal(availability.owner, availability)}
+            className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors font-semibold text-lg"
+            aria-label={`Message ${availability.owner?.first_name} about ${availability.allDogs?.[0]?.name || 'this post'}`}
+          >
+            💬 Message {availability.owner?.first_name}
+          </button>
+          {/* TODO: Analytics - cta_message_primary_viewed { placement: "sticky", device: "mobile" } */}
+        </div>
+      )}
+
+      {/* Message Modal */}
+      <MessageModal
+        isOpen={messageModal.isOpen}
+        onClose={closeMessageModal}
+        recipient={messageModal.recipient}
+        availabilityPost={messageModal.availabilityPost}
+      />
     </div>
   );
 }
