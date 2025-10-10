@@ -245,12 +245,13 @@ export default function MessagesPage() {
         throw error;
       }
       
-      console.log('[fetchMessages] Setting messages:', data);
-      setMessages(data || []);
-      console.log('[fetchMessages] Messages state updated');
+      console.log('[fetchMessages] Returning messages:', data?.length ?? 0);
+      
+      // Return the data so it can be used by the caller
+      return data || [];
     } catch (error) {
       console.error('Error fetching messages:', error);
-      setMessages([]); // Clear messages on error
+      return []; // Return empty array on error
     }
   };
 
