@@ -37,169 +37,103 @@ export async function GET(req) {
 
       console.log("Session created successfully for user:", data.user?.id);
       
-      // Track if this is a new/incomplete user for redirect decision
-      let isNewOrIncompleteUser = false;
-      
       // Extract Google user metadata for name pre-filling
-      try {
-        const userMetadata = data.user?.user_metadata || {};
-        const googleName = userMetadata?.full_name || userMetadata?.name;
-        const googleGivenName = userMetadata?.given_name || userMetadata?.first_name;
-        const googleFamilyName = userMetadata?.family_name || userMetadata?.last_name;
-        const googlePicture = userMetadata?.picture || userMetadata?.avatar_url;
+      const userMetadata = data.user?.user_metadata || {};
+      const googleGivenName = userMetadata?.given_name || userMetadata?.first_name;
+      const googleFamilyName = userMetadata?.family_name || userMetadata?.last_name;
+      const googlePicture = userMetadata?.picture || userMetadata?.avatar_url;
+      
+      // Check if profile exists
+      const { data: existingProfile, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', data.user.id)
+        .single();
+      
+      // If profile doesn't exist, create it with Google data
+      if (profileError && profileError.code === 'PGRST116') {
+        console.log('📝 Creating new profile with Google data...');
         
-        console.log('🔍 Debug: Google user metadata:', {
-          full_name: googleName,
-          given_name: googleGivenName,
-          family_name: googleFamilyName,
-          picture: googlePicture
-        });
+        const profileData = {
+          id: data.user.id,
+          email: data.user.email,
+          first_name: googleGivenName || '',
+          last_name: googleFamilyName || '',
+          profile_photo_url: googlePicture || null
+        };
         
-        // Check if profile exists
-        const { data: existingProfile, error: profileError } = await supabase
+        await supabase
           .from('profiles')
-          .select('*')
-          .eq('id', data.user.id)
-          .single();
-          
-        console.log('🔍 Debug: Profile lookup result:', { profile: !!existingProfile, error: profileError?.message });
+          .insert(profileData);
+      } else if (existingProfile) {
+        // Update existing profile with Google data if name fields are empty
+        const updateData = {};
         
-        // If profile doesn't exist, create it with Google data
-        if (profileError && profileError.code === 'PGRST116') {
-          console.log('📝 Creating new profile with Google data...');
-          
-          const profileData = {
-            id: data.user.id,
-            email: data.user.email,
-            first_name: googleGivenName || '',
-            last_name: googleFamilyName || '',
-            profile_photo_url: googlePicture || null
-          };
-          
-          const { data: newProfile, error: createError } = await supabase
+        if (!existingProfile.first_name && googleGivenName) {
+          updateData.first_name = googleGivenName;
+        }
+        
+        if (!existingProfile.last_name && googleFamilyName) {
+          updateData.last_name = googleFamilyName;
+        }
+        
+        if (!existingProfile.profile_photo_url && googlePicture) {
+          updateData.profile_photo_url = googlePicture;
+        }
+        
+        if (Object.keys(updateData).length > 0) {
+          await supabase
             .from('profiles')
-            .insert(profileData)
-            .select()
-            .single();
-            
-          if (createError) {
-            console.error('❌ Error creating profile:', createError);
-          } else {
-            console.log('✅ Profile created with Google data:', newProfile);
-            // New profile won't have role or phone_number, so needs to complete profile
-            isNewOrIncompleteUser = true;
-          }
-        } else if (existingProfile) {
-          // Check if existing profile is complete
-          const hasRole = existingProfile.role?.trim();
-          const hasPhone = existingProfile.phone_number?.trim();
-          
-          if (!hasRole || !hasPhone) {
-            console.log('📋 Existing profile is incomplete - needs role/phone');
-            isNewOrIncompleteUser = true;
-          }
-          
-          // Update existing profile with Google data if name fields are empty
-          const updateData = {};
-          let needsUpdate = false;
-          
-          if (!existingProfile.first_name && googleGivenName) {
-            updateData.first_name = googleGivenName;
-            needsUpdate = true;
-          }
-          
-          if (!existingProfile.last_name && googleFamilyName) {
-            updateData.last_name = googleFamilyName;
-            needsUpdate = true;
-          }
-          
-          if (!existingProfile.profile_photo_url && googlePicture) {
-            updateData.profile_photo_url = googlePicture;
-            needsUpdate = true;
-          }
-          
-          if (needsUpdate) {
-            console.log('📝 Updating existing profile with Google data...');
-            
-            const { data: updatedProfile, error: updateError } = await supabase
-              .from('profiles')
-              .update(updateData)
-              .eq('id', data.user.id)
-              .select()
-              .single();
-              
-            if (updateError) {
-              console.error('❌ Error updating profile:', updateError);
-            } else {
-              console.log('✅ Profile updated with Google data:', updatedProfile);
-            }
-          }
+            .update(updateData)
+            .eq('id', data.user.id);
         }
-      } catch (metadataError) {
-        console.error('❌ Error processing Google metadata:', metadataError);
-        // Don't fail the login process if metadata processing fails
       }
       
-      // Send welcome email for new users
-      try {
-        console.log('🔍 Debug: Checking for new user:', data.user.email, 'Created at:', data.user.created_at);
-        
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', data.user.id)
-          .single();
-          
-        console.log('🔍 Debug: Profile lookup result:', { profile: !!profile, error: profileError?.message });
-          
-        if (!profileError && profile) {
-          // Check if this is a new user (created within last 5 minutes)
-          const userCreatedAt = new Date(data.user.created_at);
-          const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-          
-          console.log('🔍 Debug: User created at:', userCreatedAt, 'Five minutes ago:', fiveMinutesAgo, 'Is new user:', userCreatedAt > fiveMinutesAgo);
-          
-          // Check if this is a new user (created within last 5 minutes)
-          if (userCreatedAt > fiveMinutesAgo) {
-            console.log('📧 Debug: Attempting to send welcome email...');
-            
-            // Send welcome email using new centralized system
-            const emailResponse = await fetch(`${requestUrl.origin}/api/emails/send-welcome`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ userId: data.user.id })
-            });
-            
-            const emailResult = await emailResponse.json();
-            console.log('📧 Debug: Welcome email response:', emailResult);
-            
-            if (emailResponse.ok) {
-              console.log('✅ Welcome email sent successfully to:', data.user.email);
-            } else {
-              console.error('❌ Welcome email failed:', emailResult);
-            }
-          } else {
-            console.log('⏰ Debug: User is not new (created more than 5 minutes ago)');
-          }
-        } else {
-          console.log('❌ Debug: Profile not found or error:', profileError?.message);
+      // Send welcome email for new users (created within last 5 minutes)
+      const userCreatedAt = new Date(data.user.created_at);
+      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+      
+      if (userCreatedAt > fiveMinutesAgo) {
+        try {
+          await fetch(`${requestUrl.origin}/api/emails/send-welcome`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: data.user.id })
+          });
+        } catch (emailError) {
+          console.error('❌ Error sending welcome email:', emailError);
         }
-      } catch (emailError) {
-        console.error('❌ Error in welcome email process:', emailError);
-        // Don't fail the login process if email fails
       }
       
-      // URL to redirect to after sign in process completes
+      // ==================================================================
+      // ROUTING LOGIC - Determine where to redirect after sign in
+      // ==================================================================
+      
+      // Get the user's profile to check if it's complete
+      const { data: userProfile } = await supabase
+        .from('profiles')
+        .select('bio, role, phone_number')
+        .eq('id', data.user.id)
+        .single();
+      
       const origin = requestUrl.origin;
       
-      // Redirect based on profile completeness (tracked during profile creation/check above)
-      if (isNewOrIncompleteUser) {
-        console.log("✨ New/incomplete user - Redirecting to profile edit");
+      // Check if profile is complete
+      // Required: bio, role, phone_number must all be filled out
+      const hasCompleteBio = userProfile?.bio?.trim();
+      const hasRole = userProfile?.role?.trim();
+      const hasPhone = userProfile?.phone_number?.trim();
+      const isProfileComplete = hasCompleteBio && hasRole && hasPhone;
+      
+      if (isProfileComplete) {
+        // User has complete profile → Go to community
+        console.log("✅ Complete profile - Redirecting to /community");
+        return NextResponse.redirect(origin + "/community");
+      } else {
+        // User has incomplete profile → Go to profile edit
+        console.log("📝 Incomplete profile - Redirecting to /profile/edit");
         return NextResponse.redirect(origin + "/profile/edit");
       }
-      
-      console.log("✅ Existing complete user - Redirecting to:", config.auth.callbackUrl);
-      return NextResponse.redirect(origin + config.auth.callbackUrl);
     } catch (error) {
       console.error("Unexpected error during session exchange:", error);
       return NextResponse.redirect(new URL("/signin?error=unexpected_error", requestUrl.origin));
