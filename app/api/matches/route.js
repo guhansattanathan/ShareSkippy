@@ -76,13 +76,17 @@ export async function GET(request) {
         `
         id,
         first_name,
+        last_name,
         profile_photo_url,
         bio,
         city,
         neighborhood,
         role,
         display_lat,
-        display_lng
+        display_lng,
+        street_address,
+        state,
+        zip_code
       `
       )
       .in('role', targetRoles)

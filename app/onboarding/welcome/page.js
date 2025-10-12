@@ -190,11 +190,13 @@ export default function WelcomePage() {
                     <div className="flex items-start justify-between mb-2">
                       <div>
                         <h3 className="text-xl font-semibold text-gray-900">
-                          {match.first_name}
+                          {match.first_name} {match.last_name || ''}
                         </h3>
                         <p className="text-sm text-gray-500">
-                          📍 {formatDistance(match.distance)} •{' '}
-                          {match.neighborhood || match.city}
+                          📍 {formatDistance(match.distance)}
+                          {(match.neighborhood || match.city) && (
+                            <> • {match.neighborhood || match.city}{match.neighborhood && match.city && match.neighborhood !== match.city ? `, ${match.city}` : ''}</>
+                          )}
                         </p>
                       </div>
                     </div>
