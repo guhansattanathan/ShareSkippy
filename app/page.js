@@ -109,19 +109,13 @@ export default function Home() {
 
   // Handle carousel navigation
   const goToPrevious = () => {
-    setIsPaused(true);
     setCurrentMessageIndex((prev) => 
       prev - 1 < 0 ? carouselMessages.length - 1 : prev - 1
     );
-    // Resume auto-play after 7 seconds
-    setTimeout(() => setIsPaused(false), 7000);
   };
 
   const goToNext = () => {
-    setIsPaused(true);
     setCurrentMessageIndex((prev) => (prev + 1) % carouselMessages.length);
-    // Resume auto-play after 7 seconds
-    setTimeout(() => setIsPaused(false), 7000);
   };
 
   const togglePause = () => {
