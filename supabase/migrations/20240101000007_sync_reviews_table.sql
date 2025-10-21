@@ -25,10 +25,6 @@ ALTER TABLE reviews DROP CONSTRAINT IF EXISTS reviews_reviewer_role_check;
 ALTER TABLE reviews ADD CONSTRAINT reviews_reviewer_role_check 
 CHECK (reviewer_role = ANY (ARRAY['owner'::text, 'walker'::text]));
 
--- Add constraint for reviewed_role
-ALTER TABLE reviews ADD CONSTRAINT reviews_reviewed_role_check 
-CHECK (reviewed_role = ANY (ARRAY['owner'::text, 'walker'::text]));
-
 -- Add constraint for status
 ALTER TABLE reviews ADD CONSTRAINT reviews_status_check 
 CHECK (status = ANY (ARRAY['active'::text, 'hidden'::text, 'deleted'::text]));
