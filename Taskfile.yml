@@ -15,20 +15,18 @@ tasks:
 
   setup:all:
     desc: 'Runs all necessary setup steps (init, env, services).'
-    deps:
-      - setup:init
-      - services:start
-      - setup:env
+    cmds:
+      - task: setup:init
+      - task: services:start
+      - task: setup:env
 
   setup:init:
     desc: 'Initializes the Supabase project locally and installs dependencies.'
+    interactive: true
     cmds:
       - cmd: npm install
       # Idempotent Supabase initialization check
-      - cmd: |
-          if [ ! -d supabase ]; then
-            npx supabase init
-          fi
+      - cmd: npx supabase init --force
 
   setup:env:
     desc: 'Ensures .env.local exists and is populated with local Supabase variables.'
