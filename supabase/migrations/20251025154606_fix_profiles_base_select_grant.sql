@@ -10,6 +10,10 @@ GRANT ALL ON public.dogs TO authenticated;
 GRANT ALL ON public.availability TO authenticated;
 GRANT ALL ON public.messages TO authenticated;
 GRANT ALL ON public.conversations TO authenticated;
+GRANT ALL ON public.user_settings TO authenticated; 
+
+-- ADDED: Base permissions for account_deletion_requests
+GRANT ALL ON public.account_deletion_requests TO authenticated; 
 
 -- Restore base SELECT permission for utility/logging tables that caused errors
 GRANT SELECT ON public.user_activity TO authenticated;
@@ -18,7 +22,7 @@ GRANT SELECT ON public.reviews_pending TO authenticated;
 GRANT SELECT ON public.meetings TO authenticated;
 
 
--- 2. RESTORE/CREATE RLS POLICIES FOR PUBLIC READS (Community Features)
+-- 2. RESTORE/CREATE RLS POLICIES FOR AUTHENTICATED ACCESS
 
 -- PROFILES RLS Fix: Allows any logged-in user to view all profiles (for community/matchmaking)
 DROP POLICY IF EXISTS "Allow authenticated users to read all profiles" ON profiles;
@@ -44,6 +48,22 @@ CREATE POLICY "Allow authenticated users to read all active reviews" ON reviews
 DROP POLICY IF EXISTS "Users can view their own activity" ON user_activity;
 CREATE POLICY "Users can view their own activity" ON user_activity
   FOR SELECT TO authenticated USING (auth.uid() = user_id);
+
+-- USER_SETTINGS RLS: Users should only see and manage their own settings.
+DROP POLICY IF EXISTS "Users can manage their own settings" ON user_settings;
+CREATE POLICY "Users can manage their own settings" ON user_settings
+    FOR ALL TO authenticated 
+    USING (auth.uid() = user_id) 
+    WITH CHECK (auth.uid() = user_id);
+
+-- ADDED: RLS Policy for account_deletion_requests
+-- Users can CREATE a request, and READ/UPDATE/DELETE their own existing requests.
+-- We assume the primary key/foreign key in this table is 'user_id' or 'requester_id'.
+DROP POLICY IF EXISTS "Users can manage their own deletion requests" ON account_deletion_requests;
+CREATE POLICY "Users can manage their own deletion requests" ON account_deletion_requests
+    FOR ALL TO authenticated 
+    USING (auth.uid() = user_id) 
+    WITH CHECK (auth.uid() = user_id);
 
 -- DANGER: Explicitly grant base table permissions to the 'authenticated' role.
 -- This bypasses the base permission denial caused by previous blanket REVOKE statements.
