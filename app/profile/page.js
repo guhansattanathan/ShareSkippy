@@ -1,6 +1,4 @@
 'use client';
-import { useUser } from '@/libs/supabase/hooks';
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
@@ -10,7 +8,6 @@ import { formatLocation } from '@/libs/utils';
 import DeleteAccountModal from '../../components/DeleteAccountModal';
 import UserReviews from '../../components/UserReviews';
 import DeletionRequestStatus from '../../components/DeletionRequestStatus';
-import { createClient } from '@/libs/supabase/client';
 import { formatLocation } from '@/libs/utils';
 
 export default function ProfilePage() {
