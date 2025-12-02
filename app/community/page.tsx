@@ -813,7 +813,7 @@ export default function CommunityPage() {
                                   dog: DogType // <-- Use uniqueDogs
                                 ) => (
                                   <div key={dog.id} className="flex items-center space-x-2">
-                                    {dog.photo_url ? (
+                                    {dog.photo_url && dog.photo_url.length > 0 ? (
                                       <Image
                                         src={dog.photo_url}
                                         alt={dog.name}
@@ -995,7 +995,7 @@ export default function CommunityPage() {
                   {/* PetPal Profile */}
                   {post.owner && (
                     <div className="flex items-center space-x-3 mb-4">
-                      {post.owner.profile_photo_url ? (
+                      {post.owner.profile_photo_url && post.owner.profile_photo_url.length > 0 ? (
                         <Image
                           src={post.owner.profile_photo_url}
                           alt={post.owner.first_name || 'PetPal'}
